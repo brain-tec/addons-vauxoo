@@ -52,8 +52,7 @@ class ProductProduct(models.Model):
 
     @api.multi
     def get_good_replacements(self):
-        """
-        :return: the replace by product (new product) if the product is not
+        """:return: the replace by product (new product) if the product is not
                  obsolete and is and active product.
         """
         replace = self.replaced_by_product_id.filtered(
@@ -66,18 +65,19 @@ class ProductProduct(models.Model):
         """ Try to set the state2 to obsolete when quantity on hand will change
         the product to end instead.
         """
-        state2 = values.get('state2', self.state2)
-        available = (
-            values.get('qty_available', self.qty_available) or
-            values.get('purchase_incoming_qty', self.purchase_incoming_qty)
-        )
+        for product in self:
+            state2 = values.get('state2', product.state2)
+            available = (
+                values.get('qty_available', product.qty_available) or
+                values.get('purchase_incoming_qty',
+                           product.purchase_incoming_qty))
 
-        if state2 == 'obsolete' and available:
-            values.update({'state2': 'end'})
-        elif state2 == 'end' and not available:
-            values.update({'state2': 'obsolete'})
-        res = super(ProductProduct, self).write(values)
-        return res
+            if state2 == 'obsolete' and available:
+                values.update({'state2': 'end'})
+            elif state2 == 'end' and not available:
+                values.update({'state2': 'obsolete'})
+            super(ProductProduct, product).write(values)
+        return True
 
     @api.cr_uid
     def update_product_state(self, cr, uid):

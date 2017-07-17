@@ -25,8 +25,10 @@ from openerp import SUPERUSER_ID, api
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 
-_US_STATE = [('draft', 'New'), ('open', 'In Progress'), (
-    'pending', 'Pending'), ('done', 'Done'), ('cancelled', 'Cancelled')]
+_US_STATE = [
+    ('draft', _('New')), ('open', _('In Progress')), ('pending', _('Pending')),
+    ('done', _('Done')), ('cancelled', _('Cancelled')),
+]
 
 
 class UserStory(osv.Model):
@@ -91,32 +93,31 @@ class UserStory(osv.Model):
     def body_progress(self, cr, uid, ids, template, context=None):
         imd_obj = self.pool.get('ir.model.data')
         template_ids = imd_obj.search(
-            cr, uid, [('model', '=', 'email.template'),
+            cr, uid, [('model', '=', 'mail.template'),
                       ('name', '=', template)])
         if template_ids:
             res_id = imd_obj.read(
                 cr, uid, template_ids, ['res_id'])[0]['res_id']
-            body_html = self.pool.get('email.template').read(
+            body_html = self.pool.get('mail.template').read(
                 cr, uid, res_id, ['body_html']).get('body_html')
             return body_html
         else:
             return False
 
     def body_criteria(self, cr, uid, ids, template, criteria, context=None):
-        '''
-        TODO: This method is incorrect, change for the original method which
+        """TODO: This method is incorrect, change for the original method which
         render the template with the original engine.
-        '''
+        """
         if context is None:
             context = {}
         imd_obj = self.pool.get('ir.model.data')
         template_ids = imd_obj.search(
-            cr, SUPERUSER_ID, [('model', '=', 'email.template'),
+            cr, SUPERUSER_ID, [('model', '=', 'mail.template'),
                                ('name', '=', template)])
         if template_ids:
             res_id = imd_obj.read(
                 cr, SUPERUSER_ID, template_ids, ['res_id'])[0]['res_id']
-            body_html = self.pool.get('email.template').read(
+            body_html = self.pool.get('mail.template').read(
                 cr, uid, res_id, ['body_html']).get('body_html')
             user_id = self.pool.get('res.users').browse(
                 cr, SUPERUSER_ID, [uid], context=context)[0]
@@ -293,7 +294,7 @@ class UserStory(osv.Model):
             type='float',
             string='Invoiceable Hours',
             help="Computed using the sum of the task work done.",
-            store = {
+            store={
                 _name: (lambda s, c, u, ids, cx={}: ids, ['task_ids'], 10),
                 'project.task': (_get_user_story_from_pt,
                                  ['work_ids', 'userstory_id'], 10),
@@ -304,7 +305,7 @@ class UserStory(osv.Model):
         'effective_hours': fields.function(
             _hours_get, string='Hours Spent',
             help="Computed using the sum of the task work done.",
-            store = {
+            store={
                 _name: (lambda s, c, u, ids, cx={}: ids, ['task_ids'], 10),
                 'project.task': (_get_user_story_from_pt,
                                  ['work_ids', 'userstory_id'], 10),
@@ -350,10 +351,9 @@ class UserStory(osv.Model):
         return self.write(cr, uid, ids, {'state': 'open'}, context=context)
 
     def get_body_disapproval(self, cr, uid, ids, context=None):
-        '''
-        TODO: This body must be verified to give the information regarding the
+        """TODO: This body must be verified to give the information regarding the
         answers in the do_disaproval method.
-        '''
+        """
         usname = self.browse(cr, uid, ids).name
         username = self.pool.get('res.users').browse(cr, uid, uid).name
         link = '#id={i}&view_type=form&model=user.story'.format(i=ids)
@@ -365,15 +365,14 @@ class UserStory(osv.Model):
                                          link=link))
 
     def do_disapproval(self, cr, uid, ids, context=None):
-        '''
-        TODO: Think about this project this is the reverse.
+        """TODO: Think about this project this is the reverse.
         Questions:
             Can be done IF?
             What are the actions if We desapprove, (Cancel it too)?
             What Happen with tasks already done?
             What is the actions that must be take by, Project Manager, Product
             Owner and the rest of the team?
-        '''
+        """
         return self.write(cr, uid, ids, {'approved': False}, context=context)
 
     def get_body_approval(self, cr, uid, i, context=None):
@@ -473,10 +472,10 @@ class UserStoryDifficulty(osv.Model):
 class AcceptabilityCriteria(osv.Model):
     _name = 'acceptability.criteria'
     _description = 'Acceptability Criteria'
+    _order="sequence"
 
     def _get_ac_ids_by_us_ids(self, cr, uid, us_ids, context=None):
-        """
-        This method is as the method of the sensitive store tuple for the
+        """This method is as the method of the sensitive store tuple for the
         functional fields defined in the current field that pretend to pull
         data form the user.story model. The method get us_ids and make a search
         for the acceptability.criteria records that need to be updated.
@@ -489,18 +488,16 @@ class AcceptabilityCriteria(osv.Model):
         return ac_ids
 
     def get_body_disapproval(self, cr, uid, ids, context=None):
-        '''
-        TODO: This body must be verified to give the information regarding the
+        """TODO: This body must be verified to give the information regarding the
         answers in the do_disaproval method.
-        '''
+        """
         model_brw = self.browse(cr, uid, ids[0])
         link = '#id={i}&view_type=form&model=user.story'.\
             format(i=model_brw.accep_crit_id and model_brw.accep_crit_id.id)
         return link
 
     def approve(self, cr, uid, ids, context=None):
-        """
-        Approve a acceptabilty criteria and send an email.
+        """Approve a acceptabilty criteria and send an email.
         """
         context = context or {}
         criterial_brw = self.browse(cr, uid, ids[0])
@@ -512,9 +509,9 @@ class AcceptabilityCriteria(osv.Model):
         template = data_obj.get_object(
             cr, uid, 'user_story', 'template_approve_aceptabilty_criterial')
 
-        # Extract body form the email.template an used as body argument in
+        # Extract body form the mail.template an used as body argument in
         # the message_post call.
-        temp_obj = self.pool.get('email.template')
+        temp_obj = self.pool.get('mail.template')
         story_obj = self.pool.get('user.story')
         body = temp_obj.read(
             cr, SUPERUSER_ID, template.id, ['body_html'],
@@ -588,7 +585,7 @@ class AcceptabilityCriteria(osv.Model):
         partner_ids = list(set(partner_ids))
         template = data_obj.get_object(
             cr, uid, 'user_story', 'template_ask_aceptabilty_criterial')
-        mail = self.pool.get('email.template').generate_email(
+        mail = self.pool.get('mail.template').generate_email(
             cr, SUPERUSER_ID, template.id, ids[0])
         compose_id = compose_obj.create(cr, uid, {
             'model': 'user.story',
@@ -601,8 +598,7 @@ class AcceptabilityCriteria(osv.Model):
 
     def _get_user_story_field(self, cr, uid, ids, fieldname, arg,
                               context=None):
-        """
-        Method used as the function for extracting values for the user.story
+        """Method used as the function for extracting values for the user.story
         model using functional fields. This method is used for various fields,
         the fieldname it matters to extract the value, the field name need to
         be the same from the user.story model.
@@ -616,14 +612,76 @@ class AcceptabilityCriteria(osv.Model):
             res[ac_brw.id] = copy_field
         return res
 
+    def _get_user_story_state(self, cr, uid, ids, fieldname, arg,
+                              context=None):
+        """ For acceptability.criteria,
+            returns the state of user.story to which belong """
+        res = {}.fromkeys(ids)
+        for ac in self.browse(cr, uid, ids, context=context):
+            res[ac.id] = ac.accep_crit_id.state
+        return res
+
+    def _get_us_ca_numbers(self, cr, uid, ids, fieldname, arg,
+                           context=None):
+        """ For acceptability.criteria,
+            returns the state of user.story to which belong """
+        res = {}.fromkeys(ids)
+        for ac in self.browse(cr, uid, ids, context=context):
+            ac_number = ac.name.split(')')
+            if len(ac_number) > 1:
+                ac_number = ac_number[0]
+            else:
+                ac_number = ac.name[0:3]
+            if ac.sequence_ac:
+                ac_number = str(ac.sequence_ac)
+            res[ac.id] = \
+                'HU#' + str(ac.accep_crit_id.id) + ' CA#' + ac_number
+        return res
+
+    def _get_default_sequence(self, cr, uid, context=None):
+        """ Method to place the sequence of acceptability criteria """
+        ac_ids = context.get('accep_crit_ids', [])
+        in_memory = [x for x in ac_ids if not x[1]]
+        seq = len(ac_ids) + 1
+        if in_memory:
+            order = sorted(in_memory, key=lambda x: x[2]['sequence_ac'])
+            if order[-1][2]['sequence_ac'] > len(ac_ids):
+                order[-1][2]['sequence_ac'] += 1
+                seq = order[-1][2]['sequence_ac']
+        elif len(ac_ids):
+            order = [x[1] for x in ac_ids]
+            read_ac = self.read(cr, uid, order,
+                                ['sequence_ac'], context=context)
+            maxi = max(read_ac, key=lambda x: x['sequence_ac'])
+            if maxi['sequence_ac'] > len(ac_ids):
+                maxi['sequence_ac'] += 1
+                seq = maxi['sequence_ac']
+        return seq
+
     _columns = {
         'name': fields.char('Title', size=255, required=True, readonly=False,
                             translate=True),
         'scenario': fields.text('Scenario', required=True, translate=True),
         'accep_crit_id': fields.many2one('user.story',
                                          'User Story',
-                                         ondelete='cascade',
-                                         ),
+                                         ondelete='cascade',),
+        'accep_crit_state': fields.function(
+            _get_user_story_state,
+            type='selection',
+            selection=_US_STATE,
+            string='User Story State',
+            store={'user.story': (_get_ac_ids_by_us_ids, ['state'], 10)},
+        ),
+        'us_ac_numbers': fields.function(
+            _get_us_ca_numbers,
+            type='char',
+            string='US AC #',
+            help='User Story and Acceptability Criteria Numbers',
+            store={
+                'acceptability.criteria': (lambda s, c, u, i, ctx: i,
+                                           ['accep_crit_id', 'name',
+                                            'sequence_ac'], 16)}
+        ),
         'accepted': fields.boolean('Accepted',
                                    help='Check if this criterion apply'),
         'development': fields.boolean('Development'),
@@ -696,10 +754,19 @@ class AcceptabilityCriteria(osv.Model):
                                            ['accep_crit_id'], 16),
                 'user.story': (_get_ac_ids_by_us_ids, ['user_execute_id'], 20),
             }),
+        'sequence_ac': fields.integer("Sequence"),
+        'sequence': fields.integer("sequence"),
     }
     _defaults = {
         'name': lambda *a: None,
         'difficulty': 'na',
+        'sequence_ac': _get_default_sequence,
+        'sequence': 10,
+    }
+
+    _sql_constraints = {
+        ('unique_sequence_ac', 'unique(accep_crit_id, sequence_ac)',
+         'Sequence must be unique'),
     }
 
 
@@ -707,7 +774,7 @@ class ProjectTask(osv.Model):
     _inherit = 'project.task'
 
     def default_get(self, cr, uid, field, context=None):
-        '''Owerwrite default get to add project in new task automatically'''
+        """Owerwrite default get to add project in new task automatically"""
         if context is None:
             context = {}
         res = super(ProjectTask, self).default_get(
@@ -757,7 +824,7 @@ class ProjectTask(osv.Model):
 
 class InheritProject(osv.Model):
 
-    '''Inheirt project model to a new Descripcion field'''
+    """Inheirt project model to a new Descripcion field"""
 
     _inherit = 'project.project'
     _columns = {

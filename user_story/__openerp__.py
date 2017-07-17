@@ -25,7 +25,7 @@
 ##############################################################################
 {
     "name": "User Story",
-    "version": "2.6",
+    "version": "8.0.0.3.0",
     "author": "Vauxoo",
     "category": "Generic Modules",
     "website": "http://vauxoo.com",
@@ -35,16 +35,14 @@
         "project",
         "sprint_kanban",
         "project_timesheet",
-        "hr_timesheet_invoice",
-        "project_conf",
         "report_webkit"
     ],
     "demo": [
         "demo/demo.xml"
     ],
     "data": [
-        #"data/data_us_report.xml",
-        #"report/user_story_report_view.xml",
+        # "data/data_us_report.xml",
+        # "report/user_story_report_view.xml",
         "security/userstory_security.xml",
         "security/ir.model.access.csv",
         "view/userstory_view.xml",

@@ -43,6 +43,11 @@ msgstr "Agrupar por ..."
 msgid "Progress"
 msgstr "Progreso"
 
+#: code:addons/user_story/model/user_story.py:81
+#, python-format
+msgid " %(criteria)s on User Story %(hu)s"
+msgstr " %(criteria)s en la Historia de Usuario %(hu)s"
+
 #. module: user_story
 #: help:acceptability.criteria,project_id:0
 msgid "User Story Project"
@@ -83,6 +88,21 @@ msgstr "Verifique si este criterio aplica"
 #: view:user.story:0 field:user.story,priority_level:0
 msgid "Priority Level"
 msgstr "Nivel de Prioridad"
+
+#. module: user_story
+#: code:addons/user_story/model/user_story.py:364
+#: code:addons/user_story/model/user_story.py:386
+#, python-format
+msgid "<html><div>\n"
+"                 <h2>%(usname)s</h2>\n"
+"                 <p>The user %(user)s has approved the user Story\n"
+"                 <a href=\"%(link)s\">See what we are talking about here</a>\n"
+"                 </div></html>"
+msgstr "<html><div>\n"
+"                 <h2>%(usname)s</h2>\n"
+"                 <p>El usuario %(user)s ha aprobado la Historia de usuario\n"
+"                 <a href=\"%(link)s\">Vea de lo que estamos hablando aquí</a>\n"
+"                 </div></html>"
 
 #. module: user_story
 #: view:acceptability.criteria:0
@@ -221,7 +241,10 @@ msgid "Followers"
 msgstr "Seguidores"
 
 #. module: user_story
+#: selection:acceptability.criteria,accep_crit_state:0
+#: code:addons/user_story/model/user_story.py:29
 #: selection:user.story,state:0
+#, python-format
 msgid "New"
 msgstr "Nuevo"
 
@@ -252,9 +275,20 @@ msgid "Assumptions"
 msgstr "Suposiciones"
 
 #. module: user_story
-#: view:user.story:0 selection:user.story,state:0
+#: selection:acceptability.criteria,accep_crit_state:0
+#: code:addons/user_story/model/user_story.py:30
+#: view:user.story:user_story.view_userstory_form
+#: view:user.story:user_story.view_userstory_search
+#: selection:user.story,state:0
+#, python-format
 msgid "Done"
 msgstr "Realizado"
+
+#. module: user_story
+#: view:acceptability.criteria:user_story.view_acceptability_criteria_search
+#: field:acceptability.criteria,accep_crit_state:0
+msgid "User Story State"
+msgstr "Estado de Historia de Usuario"
 
 #. module: user_story
 #: view:acceptability.criteria:0 field:acceptability.criteria,accepted:0
@@ -280,7 +314,7 @@ msgstr "Escenario 2.2"
 #. module: user_story
 #: view:acceptability.criteria:0
 msgid "In Development"
-msgstr "En Desarollo"
+msgstr "En Desarrollo"
 
 #. module: user_story
 #: view:user.story:0
@@ -384,7 +418,11 @@ msgid "us 3"
 msgstr "Historia de Usuario 3"
 
 #. module: user_story
-#: view:user.story:0 selection:user.story,state:0
+#: selection:acceptability.criteria,accep_crit_state:0
+#: code:addons/user_story/model/user_story.py:29
+#: view:user.story:user_story.view_userstory_form
+#: selection:user.story,state:0
+#, python-format
 msgid "Pending"
 msgstr "Pendiente"
 
@@ -483,7 +521,10 @@ msgid "Code"
 msgstr "Código"
 
 #. module: user_story
+#: selection:acceptability.criteria,accep_crit_state:0
+#: code:addons/user_story/model/user_story.py:30
 #: selection:user.story,state:0
+#, python-format
 msgid "Cancelled"
 msgstr "Cancelado"
 
@@ -508,7 +549,11 @@ msgid "Branch to clone"
 msgstr "Branch a clonar"
 
 #. module: user_story
+#: selection:acceptability.criteria,accep_crit_state:0
+#: code:addons/user_story/model/user_story.py:29
+#: view:user.story:user_story.view_userstory_search
 #: selection:user.story,state:0
+#, python-format
 msgid "In Progress"
 msgstr "En Progreso"
 
@@ -713,3 +758,18 @@ msgstr "Administrador"
 #: view:user.story:0
 msgid "Sprint"
 msgstr "Sprint"
+
+#. module: user_story
+#: view:user.story:user_story.view_userstory_form
+msgid "Seq"
+msgstr "Sec"
+
+#. module: user_story
+#: field:acceptability.criteria,sequence_ac:0
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: user_story
+#: sql_constraint:acceptability.criteria:0
+msgid "Sequence must be unique"
+msgstr "La secuencia debe ser única"

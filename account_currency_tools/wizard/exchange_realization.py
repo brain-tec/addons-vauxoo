@@ -19,14 +19,15 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
+from __future__ import division
+import logging
+from datetime import datetime, timedelta
+import pytz
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 import openerp.addons.decimal_precision as dp  # pylint: disable=F0401
 import openerp
-from datetime import datetime, timedelta
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT
-import pytz
-import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -42,7 +43,7 @@ except ImportError:
 class ForeignExchangeRealizationLine(osv.osv_memory):
 
     _name = 'foreign.exchange.realization.line'
-    _columns = {
+    _columns = {  # pylint: disable=W8105
         'wizard_id': fields.many2one(
             'foreign.exchange.realization',
             string='Wizard',
@@ -181,10 +182,13 @@ class ForeignExchangeRealization(osv.osv_memory):
                  rc_brw.journal_id.id})
 
         res['value'].update({'currency_id': cur_id})
+        res['value'].update(
+            {'check_non_multicurrency_account':
+             rc_brw.check_non_multicurrency_account})
         res['value'].update({'root_id': root_id and root_id[0]})
         return res
 
-    _columns = {
+    _columns = {  # pylint: disable=W8105
         'help': fields.boolean(
             'Show Help', help='Allows you to toggle the help in the form'),
         'root_id': fields.many2one(
@@ -289,6 +293,14 @@ class ForeignExchangeRealization(osv.osv_memory):
             readonly=True,
             string='Company Currency',
             help="This is currency used to post Exchange Rate Difference"),
+        'check_non_multicurrency_account': fields.related(
+            'company_id', 'check_non_multicurrency_account',
+            type='boolean',
+            readonly=True,
+            string='Check Non-Multicurrency Account',
+            help="Check Accounts that were not set as multicurrency, "
+            "i.e., they were not set with a secondary currency, "
+            "but were involved in multicurrency transactions"),
         'period_ids': fields.many2many(
             'account.period', 'act_period_acc_rel',
             'period_id', 'act_id', 'Affected Periods',
@@ -359,7 +371,7 @@ class ForeignExchangeRealization(osv.osv_memory):
             'Skip Opening Journal Entry Check'),
     }
 
-    _defaults = {
+    _defaults = {  # pylint: disable=W8105
         'company_id': _get_default_company,
         'fiscalyear_id': _get_fiscalyear,
         'state': 'draft',
@@ -375,14 +387,15 @@ class ForeignExchangeRealization(osv.osv_memory):
             INNER JOIN account_period AS ap ON ap.id = aml.period_id
             INNER JOIN account_move AS am ON am.id = aml.move_id
             WHERE
-                aml.account_id IN (%(account_ids)s) AND
-                aml.currency_id IN (%(currency_ids)s) AND
+                aml.account_id IN %(account_ids)s AND
+                aml.currency_id IN %(currency_ids)s AND
                 aml.currency_id IS NOT NULL AND
                 aml.state <> 'draft' AND
-                am.state IN (%(states)s) AND
-                ap.id IN (%(period_ids)s)
+                am.state IN %(states)s AND
+                ap.id IN %(period_ids)s
             GROUP BY aml.currency_id
-        ''' % args
+        '''
+        query = cr.mogrify(query, args)
         cr.execute(query)
         res = cr.dictfetchall()
         return res
@@ -398,13 +411,14 @@ class ForeignExchangeRealization(osv.osv_memory):
             INNER JOIN account_period AS ap ON ap.id = aml.period_id
             INNER JOIN account_move AS am ON am.id = aml.move_id
             WHERE
-                aml.account_id IN (%(account_ids)s) AND
+                aml.account_id IN %(account_ids)s AND
                 aml.currency_id IS NOT NULL AND
                 aml.state <> 'draft' AND
-                am.state IN (%(states)s) AND
-                ap.id IN (%(period_ids)s)
+                am.state IN %(states)s AND
+                ap.id IN %(period_ids)s
             GROUP BY aml.account_id, aml.currency_id
-        ''' % args
+        '''
+        query = cr.mogrify(query, args)
         cr.execute(query)
         res = cr.dictfetchall()
         return res
@@ -418,15 +432,17 @@ class ForeignExchangeRealization(osv.osv_memory):
             INNER JOIN account_period AS ap ON ap.id = aml.period_id
             INNER JOIN account_move AS am ON am.id = aml.move_id
             WHERE
-                aa.type = '%(account_type)s' AND
+                aa.type = %(account_type)s AND
                 aml.currency_id IS NOT NULL AND
                 aml.state <> 'draft' AND
-                am.state IN (%(states)s) AND
-                aml.company_id = %(company_id)d AND
-                aa.id BETWEEN %(parent_left)d AND %(parent_right)d AND
-                ap.id IN (%(period_ids)s)
+                am.state IN %(states)s AND
+                aml.company_id = %(company_id)s AND
+                aa.parent_left >= %(parent_left)s AND
+                aa.parent_right <= %(parent_right)s AND
+                ap.id IN %(period_ids)s
             GROUP BY aml.account_id
-        ''' % args
+        '''
+        query = cr.mogrify(query, args)
         cr.execute(query)
         res = cr.fetchall()
         if res:
@@ -442,10 +458,10 @@ class ForeignExchangeRealization(osv.osv_memory):
         company_id = wzd_brw.company_id.id
 
         # Searching for other accounts that could be used as multicurrency
-        states = ["'posted'"]
+        states = ['posted']
         if wzd_brw.target_move == 'all':
-            states.append("'draft'")
-        period_ids = [str(ap_brw.id) for ap_brw in wzd_brw.period_ids]
+            states.append('draft')
+        period_ids = [ap_brw.id for ap_brw in wzd_brw.period_ids]
         if not period_ids:
             raise osv.except_osv(
                 _('Error!'),
@@ -455,8 +471,8 @@ class ForeignExchangeRealization(osv.osv_memory):
             company_id=company_id,
             parent_left=parent_left,
             parent_right=parent_right,
-            period_ids=', '.join(period_ids),
-            states=', '.join(states),
+            period_ids=tuple(period_ids),
+            states=tuple(states),
         )
         return args
 
@@ -477,9 +493,10 @@ class ForeignExchangeRealization(osv.osv_memory):
             ])
 
         # Searching for other accounts that could be used as multicurrency
-        args = self.get_params(cr, uid, ids, account_type, fieldname,
-                               context=context)
-        res += self.get_accounts_from_aml(cr, uid, args, context=context)
+        if wzd_brw.check_non_multicurrency_account:
+            args = self.get_params(
+                cr, uid, ids, account_type, fieldname, context=context)
+            res += self.get_accounts_from_aml(cr, uid, args, context=context)
         res = list(set(res))
 
         if res:
@@ -538,17 +555,15 @@ class ForeignExchangeRealization(osv.osv_memory):
                 _('Error!'),
                 _('There are no accounts to compute'))
 
-        account_ids = [str(idx) for idx in account_ids]
-
-        states = ["'posted'"]
+        states = ['posted']
         if wzd_brw.target_move == 'all':
-            states.append("'draft'")
-        period_ids = [str(ap_brw.id) for ap_brw in wzd_brw.period_ids]
+            states.append('draft')
+        period_ids = [ap_brw.id for ap_brw in wzd_brw.period_ids]
 
         args = dict(
-            account_ids=', '.join(account_ids),
-            period_ids=', '.join(period_ids),
-            states=', '.join(states),
+            account_ids=tuple(account_ids),
+            period_ids=tuple(period_ids),
+            states=tuple(states),
         )
 
         res = self.get_values_from_aml(cr, uid, args, context=context)
@@ -710,15 +725,15 @@ class ForeignExchangeRealization(osv.osv_memory):
         }
         gal_acc = self.get_gain_loss_account_company(cr, uid, wzd_brw.id,
                                                      context=context)
-        period_ids = [str(ap_brw.id) for ap_brw in wzd_brw.period_ids]
-        states = ["'posted'"]
+        period_ids = [ap_brw.id for ap_brw in wzd_brw.period_ids]
+        states = ['posted']
         if wzd_brw.target_move == 'all':
-            states.append("'draft'")
+            states.append('draft')
         argx = {
             'account_ids': None,
             'currency_ids': None,
-            'states': ', '.join(states),
-            'period_ids': ', '.join(period_ids),
+            'states': tuple(states),
+            'period_ids': tuple(period_ids),
         }
 
         for key, val in gal_val.iteritems():
@@ -726,9 +741,8 @@ class ForeignExchangeRealization(osv.osv_memory):
             curr_brw = cur_obj.browse(cr, uid, currency_id, context=context)
             acc = dict_acc[internal_type]
             account_a = val > 0 and acc['gain'] or acc['loss']
-            argx['account_ids'] = '%s, %s' % (
-                str(acc['gain']), str(acc['loss']))
-            argx['currency_ids'] = str(currency_id)
+            argx['account_ids'] = acc['gain'], acc['loss']
+            argx['currency_ids'] = (currency_id,)
 
             res_acc = self.get_account_balance(cr, uid, argx, context=context)
             val_acc = res_acc and res_acc[0]['balance'] or 0.0

@@ -4,11 +4,12 @@
     'category': 'Website',
     'summary': 'Show your trusted service centers',
     'website': 'https://www.vauxoo.com/',
-    'version': '1.6',
+    'version': '8.0.0.1.6',
     'author': 'Vauxoo',
     'license': 'AGPL-3',
     'depends': [
-        'website_product_brand',
+        'website',
+        'product_brand',
     ],
     'data': [
         'views/layout.xml',
@@ -16,7 +17,7 @@
         'views/authorized_service_centers.xml',
     ],
     'demo': [
-
+        'demo/brands_and_partners_demo.xml',
     ],
     'qweb': [
 

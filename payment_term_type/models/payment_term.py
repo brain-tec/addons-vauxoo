@@ -34,8 +34,7 @@ class AccountPaymentTerm(models.Model):
     @api.multi
     @api.depends('line_ids')
     def _compute_payment_type(self):
-        """
-            This method compute the Payment type
+        """This method compute the Payment type
             It is cash when payment term
             has only one line to compute,
             It is credit when payment term has
@@ -47,7 +46,7 @@ class AccountPaymentTerm(models.Model):
         for record in self:
             if payment_type == 'bqp':
                 record.payment_type = 'cash'
-                if len(self.line_ids) > 1:
+                if len(record.line_ids) > 1:
                     record.payment_type = 'credit'
             elif payment_type == 'bdp':
                 for line in record.line_ids:
@@ -58,4 +57,16 @@ class AccountPaymentTerm(models.Model):
     payment_type = fields.Selection(
         [('credit', _('Credit')),
          ('cash', _('Cash'))],
-        string="Payment Type", compute='_compute_payment_type')
+        string="Payment Type", compute='_compute_payment_type',
+        help="Consult the Payment Terms in accounting settings: ( Based on "
+        "quantity of payments or Based on date of payments ) \n "
+        "-Credit: The payment term will be credit type when the payments "
+        "are covered in just two ore more exhibitions (partialities) or \n"
+        "when the payments are covered in just one or more "
+        "exhibitions, but the payments will be done in a different "
+        "day that the sale order confirmation day.\n"
+        "-Cash: The payment term will be cash type when the payments "
+        "have been covered in just one exhibition. without matter the date of "
+        "payment or when the payments have been covered in just "
+        "one exhibition, in the same day that the  sale order be confirmed."
+    )

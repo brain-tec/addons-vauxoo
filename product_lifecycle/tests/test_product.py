@@ -30,8 +30,7 @@ import time
 
 class TestProductLifecycle(common.TransactionCase):
 
-    """
-    - CRUD Tests over product.product
+    """- CRUD Tests over product.product
     - Purchase Order with obsolete lines.
     - Replacement Products Wizard Test
 
@@ -138,8 +137,7 @@ class TestProductLifecycle(common.TransactionCase):
         return product
 
     def create_pol(self, order, product):
-        """
-        Create a new purchase order line for the given purchase order taking
+        """Create a new purchase order line for the given purchase order taking
         as input only the product
         """
         write_flag = order.write({
@@ -166,8 +164,7 @@ class TestProductLifecycle(common.TransactionCase):
         return order
 
     def replacement_wizard(self):
-        """
-        - Create a valid purchase order with multiple lines (not obsoletes)
+        """- Create a valid purchase order with multiple lines (not obsoletes)
         - Then update one of its line product to a obsolete product.
         - Check that the purchase order now have a obsolete line.
         - Simulate click on the "Replace Obsolete Products" button to run the
@@ -397,6 +394,10 @@ class TestProductLifecycle(common.TransactionCase):
         # When confirm the picking of the purchase will make the products
         # available in quantity on hand. (100)
         purchase_order.picking_ids.do_transfer()
+
+        # TODO: Remove when the issue # odoo/odoo#12254 is fixed
+        product._compute_purchase_incoming_qty()
+
         self.assertEqual(product.qty_available, 10.0)
         self.assertEqual(product.purchase_incoming_qty, 0.0)
 

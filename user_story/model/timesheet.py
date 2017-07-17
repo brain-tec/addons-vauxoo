@@ -23,8 +23,8 @@ from openerp.osv import fields, osv
 from openerp.tools.sql import drop_view_if_exists
 
 
-class HrTimesheet(osv.Model):
-    _inherit = "hr.analytic.timesheet"
+class AnalyticLine(osv.Model):
+    _inherit = "account.analytic.line"
 
     def _get_invoiceables_hours(
             self, cr, uid,
@@ -66,9 +66,9 @@ class HrTimesheet(osv.Model):
                    SELECT array_agg(work.hr_analytic_timesheet_id) as a_id
                    FROM project_task AS task
                    INNER JOIN project_task_work AS work ON work.task_id=task.id
-                   WHERE task.id {op} {tids}
-                   '''.format(op=(len(ids) == 1) and '=' or 'in',
-                              tids=(len(ids) == 1) and ids[0] or tuple(ids)))
+                   WHERE task.id %(op)s %(tids)s
+                   ''', {'op': (len(ids) == 1) and '=' or 'in',
+                         'tids': (len(ids) == 1) and ids[0] or tuple(ids)})
         res = cr.dictfetchall()
         if res:
             res = res[0].get('a_id', []) or []

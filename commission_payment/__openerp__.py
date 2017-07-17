@@ -29,7 +29,7 @@
 ##############################################################################
 {
     "name": "Salespeople Commission based on Payments",
-    "version": "0.6",
+    "version": "8.0.0.0.7",
     "author": "Vauxoo",
     "category": "Generic Modules/Others",
     "website": "http://www.vauxoo.com",
@@ -52,6 +52,7 @@
         "report/layouts.xml",
         "report/template.xml",
         "data/report_paperformat.xml",
+        "data/data.xml",
         "view/commission_report.xml",
         "view/commission_view.xml",
         "view/account_view.xml",

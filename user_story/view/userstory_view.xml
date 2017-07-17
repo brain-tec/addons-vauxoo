@@ -87,8 +87,10 @@
                 </div>
               <field name="description" colspan="4" nolabel="1" attrs="{'readonly':[('approved','=',True)]}" placeholder="Add a description here ..." widget="html"/>
               <h1><label for="accep_crit_ids" string="4.- Acceptability Criteria" class="oe_horizontal_separator oe_clear"/></h1>
-              <field name="accep_crit_ids" colspan="4" nolabel="1">
+              <field name="accep_crit_ids" colspan="4" nolabel="1" context="{'accep_crit_ids': accep_crit_ids}">
                 <tree string="Acceptability Criteria" editable="bottom">
+                  <field name="sequence" widget="handle"/>
+                  <field name="sequence_ac" string="Seq"/>
                   <field name="name"/>
                   <field name="scenario"/>
                   <field name="accepted"/>
@@ -233,6 +235,7 @@
                     </h1>
                     <group>
                         <field name="scenario"/>
+                        <field name="us_ac_numbers"/>
                         <field name="accepted"/>
                         <field name="development"/>
                         <field name="difficulty" invisible="1"/>
@@ -250,9 +253,12 @@
         <field name="arch" type="xml">
             <tree string="Acceptability Criteria">
                 <field name="id"/>
+                <field name="us_ac_numbers"/>
+                <field name="sequence_ac"/>
                 <field name="name"/>
                 <field name="scenario"/>
                 <field name="accep_crit_id"/>
+                <field name="accep_crit_state" invisible="True"/>
                 <field name="project_id" invisible="True"/>
                 <field name="sk_id" invisible="True"/>
                 <field name="categ_ids" invisible="True"/>
@@ -275,10 +281,13 @@
         <field name="arch" type="xml">
             <search string="Acceptability Criteria">
                 <group string="Filter">
+                    <field name="us_ac_numbers"/>
                     <field name="id"/>
+                    <field name="sequence_ac"/>
                     <field name="name"/>
                     <field name="scenario"/>
                     <field name="accep_crit_id"/>
+                    <field name="accep_crit_state"/>
                     <field name="accepted"/>
                     <field name="development"/>
                     <field name="difficulty"/>
@@ -288,6 +297,7 @@
                 <group expand="1" string="Group By...">
                     <filter name="accept_criteria_user_story_id" string="User Story" context="{'group_by':'accep_crit_id'}"/>
                     <filter name="accept_criteria_difficulty" string="Difficulty" context="{'group_by':'difficulty'}"/>
+                    <filter name="accept_criteria_user_story_state" string="User Story State" context="{'group_by':'accep_crit_state'}"/>
                     <separator/>
                     <filter name="accept_criteria_project_id" string="Project" context="{'group_by':'project_id'}"/>
                     <filter name="accept_criteria_sk_id" string="Sprint" context="{'group_by':'sk_id'}"/>
@@ -355,7 +365,7 @@
       <field name="res_model">user.story</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
-      <field name="domain">[('user_id','=',uid),('state','not in',('cancel','done'))]</field>
+      <field name="domain">[('user_execute_id','=',uid),('state','not in',('cancel','done'))]</field>
       <field name="view_id" ref="view_userstory_tree"/>
     </record>
 

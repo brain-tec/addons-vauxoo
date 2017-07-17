@@ -26,7 +26,7 @@ class ResCompany(osv.Model):
     _inherit = "res.company"
     _description = 'Companies'
 
-    _columns = {
+    _columns = {  # pylint: disable=W8105
         'bank_gain_exchange_account_id': fields.many2one(
             'account.account', 'Bank Gain Account',
             domain=('[("type", "!=", "view")]'),
@@ -67,4 +67,9 @@ class ResCompany(osv.Model):
             'account.journal', 'Posting Journal',
             domain=("[('type','=','general')]"),
             required=False),
+        'check_non_multicurrency_account': fields.boolean(
+            'Check Non-Multicurrency Account',
+            help="Check Accounts that were not set as multicurrency, "
+            "i.e., they were not set with a secondary currency, "
+            "but were involved in multicurrency transactions"),
     }

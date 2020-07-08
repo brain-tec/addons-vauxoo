@@ -4,20 +4,27 @@
 Functional Rationale:
 ---------------------
 
-Provide a nice widget in the product form to see the quantity of product
+Provide a nice widget in the product on the stock moves to see the quantity of product
 by warehouse in order to help you to review such information as fast as possible.
 
-.. figure:: static/description/widget_by_warehouse.png
+.. figure:: static/description/widget_locations_stock.png
     :alt: Example on Form View
-    :width: 800px
+    :width: 600px
 
-Also, provide another widget in the product variant form to see the quantity in
-stock by locations and by warehouse, to help you have a better look of where your
-products are available.
+.. figure:: static/description/widget_locations_stock_2.png
+    :alt: Example on Form View
+    :width: 600px
 
-.. figure:: static/description/widget_locations.png
-    :alt: Example with locations on Form View
-    :width: 800px
+.. figure:: static/description/widget_locations_stock_3.png
+    :alt: Example on Form View
+    :width: 600px
+
+It also, set a default locaation for the stock move line, this default value depends
+on the location that has the highest quantity of the product in stock.
+
+.. figure:: static/description/suggested_location.png
+    :alt: Example of suggested location
+    :width: 600px
 
 Developers usage:
 -----------------
@@ -29,7 +36,8 @@ Notes:
 ------
 
 This module rely on variants and multiple warehouse management
-properly configured
+properly configured.
+The widget will only be seen on the stock moves when its transfer has the type of outgoing.
 
 Maintainer
 ----------
@@ -45,4 +53,4 @@ development and implementation of enterprise management
 systems and bases its entire operation strategy in the use
 of Open Source Software and its main product is Odoo.
 
-To contribute to this module, please visit http://www.vauxoo.com.
+To contribute to this module, please visit http://www.vauxoo.com

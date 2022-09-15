@@ -55,21 +55,37 @@ jobs:
             ~/.cache/pre-commit
             ~/.cache/pip
           key: cache-pip-build
+
+      - name: Set ssh keys
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-add - <<< "${{ secrets.PRIVATE_DEPLOY_KEY }}"
+
       - name: Install dependencies
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           sudo apt-get update
           sudo apt-get install dos2unix
           mkdir -p ~/.ssh/
           ssh-keyscan -H git.vauxoo.com >> ~/.ssh/known_hosts
           pip install -U deployv
+
       - name: Build image
         env:
           PRIVATE_DEPLOY_KEY: ${{ secrets.PRIVATE_DEPLOY_KEY }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          ORCHEST_REGISTRY: ${{ secrets.ORCHEST_REGISTRY }}
+          ORCHEST_TOKEN: ${{ secrets.ORCHEST_TOKEN }}
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           pip install -U --force-reinstall vxbase vxci
           source variables.sh
           vxci check_keys
-          vxci build_image
+          vxci build_image --push_image
 
     # artifacts:
     #   paths:

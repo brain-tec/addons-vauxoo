@@ -68,7 +68,7 @@ jobs:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           sudo apt-get update
-          sudo apt-get install dos2unix
+          sudo apt-get install dos2unix -y
           mkdir -p ~/.ssh/
           ssh-keyscan -H git.vauxoo.com >> ~/.ssh/known_hosts
           pip install -U deployv

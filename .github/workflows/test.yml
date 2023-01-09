@@ -74,6 +74,11 @@ jobs:
           pip install -U deployv
 
       - name: Build image
+        uses: actions/upload-artifact@v2
+        with:
+          name: image-name
+          path: ${GITHUB_REF_NAME}/image_name.env
+          retention-days: 2
         env:
           PRIVATE_DEPLOY_KEY: ${{ secrets.PRIVATE_DEPLOY_KEY }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -88,12 +93,17 @@ jobs:
           vxci --log_level=DEBUG build_image --push_image
 
       - name: Test odoo image
+        uses: actions/download-artifact@v2
+        with:
+          name: image-name
+          path: ${GITHUB_REF_NAME}/image_name.env
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           source variables.sh
           source $GITHUB_REF_NAME/image_name.env
           vxci test_repo --allow_deprecated
+
     # artifacts:
     #   paths:
     #     - $CI_COMMIT_REF_NAME

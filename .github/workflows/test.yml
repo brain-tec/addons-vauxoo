@@ -85,7 +85,7 @@ jobs:
           pip install -U --force-reinstall vxbase vxci
           source variables.sh
           vxci check_keys
-          vxci build_image --push_image
+          vxci build_image --push_image --log_level=DEBUG
 
       - name: Test odoo image
         env:

@@ -73,12 +73,7 @@ jobs:
           ssh-keyscan -H git.vauxoo.com >> ~/.ssh/known_hosts
           pip install -U deployv
 
-      - name: Build image
-        uses: actions/upload-artifact@v2
-        with:
-          name: image-name
-          path: ${GITHUB_REF_NAME}/image_name.env
-          retention-days: 2
+      - name: Build and image
         env:
           PRIVATE_DEPLOY_KEY: ${{ secrets.PRIVATE_DEPLOY_KEY }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -91,16 +86,6 @@ jobs:
           source variables.sh
           vxci check_keys
           vxci --log_level=DEBUG build_image --push_image
-
-      - name: Test odoo image
-        uses: actions/download-artifact@v2
-        with:
-          name: image-name
-          path: ${GITHUB_REF_NAME}/image_name.env
-        env:
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        run: |
-          source variables.sh
           source $GITHUB_REF_NAME/image_name.env
           vxci test_repo --allow_deprecated
 

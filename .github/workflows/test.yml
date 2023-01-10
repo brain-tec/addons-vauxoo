@@ -86,9 +86,7 @@ jobs:
           source variables.sh
           vxci check_keys
           vxci --log_level=DEBUG build_image --push_image
-          ls -l
-          ls -l ./15-0-deployv-truiz
-          source $GITHUB_REF_NAME/image_name.env
+          source $(echo $GITHUB_REF_NAME | sed -r 's/[^a-z0-9]++/-/g')/image_name.env
           vxci test_repo --allow_deprecated
 
     # artifacts:

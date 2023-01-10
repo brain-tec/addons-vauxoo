@@ -86,6 +86,7 @@ jobs:
           source variables.sh
           vxci check_keys
           vxci --log_level=DEBUG build_image --push_image
+          ls -l
           source $GITHUB_REF_NAME/image_name.env
           vxci test_repo --allow_deprecated
 

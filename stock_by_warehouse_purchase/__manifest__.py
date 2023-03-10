@@ -14,10 +14,9 @@
         "purchase",
     ],
     "data": [
-        'views/purchase_view.xml',
+        "views/purchase_order_views.xml",
     ],
-    "demo": [
-    ],
+    "demo": [],
     "installable": True,
     "auto_install": False,
 }

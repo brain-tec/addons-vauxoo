@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
 
     <!-- Grant portal access to the customer -->
@@ -7,19 +7,15 @@
             name="user_ids"
             model="res.partner"
             eval="[
-            (0, 0, {
-                'partner_id': ref('base.res_partner_3'),
-                'email': obj(ref('base.res_partner_3')).email,
-                'in_portal': True,
-            }),
-        ]"
+                (0, 0, {
+                    'partner_id': ref('base.res_partner_3'),
+                    'email': obj(ref('base.res_partner_3')).email,
+                    'in_portal': True,
+                }),
+            ]"
         />
     </record>
-    <function
-        model="portal.wizard"
-        name="action_apply"
-        eval="[ref('grant_portal_access')]"
-    />
+    <function model="portal.wizard" name="action_apply" eval="[ref('grant_portal_access')]" />
 
     <!-- Set a password for the portal user so it may log-in -->
     <record id="set_password_portal_user" model="change.password.wizard">
@@ -27,18 +23,14 @@
             name="user_ids"
             model="res.partner"
             eval="[
-            (0, 0, {
-                'user_id': obj(ref('base.res_partner_3')).user_ids.id,
-                'user_login': obj(ref('base.res_partner_3')).email,
-                'new_passwd': obj(ref('base.res_partner_3')).email,
-            }),
-        ]"
+                (0, 0, {
+                    'user_id': obj(ref('base.res_partner_3')).user_ids.id,
+                    'user_login': obj(ref('base.res_partner_3')).email,
+                    'new_passwd': obj(ref('base.res_partner_3')).email,
+                }),
+            ]"
         />
     </record>
-    <function
-        model="change.password.wizard"
-        name="change_password_button"
-        eval="[ref('set_password_portal_user')]"
-    />
+    <function model="change.password.wizard" name="change_password_button" eval="[ref('set_password_portal_user')]" />
 
 </odoo>

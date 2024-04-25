@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
 
         <record id="sale_order_usd" model="sale.order">
@@ -22,10 +22,6 @@
         <field name="price_unit" eval="75.0" />
     </record>
 
-    <function
-        model="sale.order"
-        name="action_confirm"
-        eval="[[ref('sale_order_usd')]]"
-    />
+    <function model="sale.order" name="action_confirm" eval="[[ref('sale_order_usd')]]" />
 
 </odoo>

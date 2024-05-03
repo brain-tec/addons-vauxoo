@@ -1,0 +1,30 @@
+from odoo import api, fields, models
+
+
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
+
+    margin_threshold = fields.Float(
+        default=lambda self: self.env.user.company_id.margin_threshold, help="Limit margin set in sales configuration"
+    )
+    purchase_price = fields.Float(readonly=True, help="Price purchase of product")
+
+    @api.depends("price_subtotal", "product_uom_qty", "purchase_price")
+    def _compute_margin(self):
+        res = super()._compute_margin()
+        for line in self:
+            currency = line.order_id.pricelist_id.currency_id
+            if not line.product_uom_qty:
+                line.margin_percent = 0.0
+                continue
+
+            if currency.is_zero(line.price_unit) or currency.is_zero(line.price_subtotal):
+                line.margin_percent = -1.0
+                continue
+
+            purchase_price = line.purchase_price or line.product_id.standard_price
+            if currency.is_zero(purchase_price):
+                line.margin_percent = 1.0
+                continue
+
+        return res

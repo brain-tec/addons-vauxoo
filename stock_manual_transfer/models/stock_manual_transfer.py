@@ -28,9 +28,12 @@ class StockManualTransfer(models.Model):
         states={"draft": [("readonly", False)]},
     )
     route_id = fields.Many2one(
-        "stock.location.route",
+        "stock.route",
         string="Preferred Route",
-        domain=[("manual_transfer_selectable", "=", True)],
+        domain="""[
+            ('manual_transfer_selectable', '=', True),
+            ('supplied_wh_id', '=', warehouse_id),
+        ]""",
         required=True,
         readonly=True,
         states={"draft": [("readonly", False)]},
@@ -63,6 +66,8 @@ class StockManualTransfer(models.Model):
     )
 
     def action_validate(self):
+        if self.state != "draft":
+            return
         route = self.route_id
         if self.warehouse_id not in route.rule_ids.warehouse_id:
             raise ValidationError(_("The selected route doesn't have configured rules on the selected warehouse."))

@@ -138,7 +138,7 @@ How add a new feature:
 12. Push your first change branch to know you start to work on.
 
     ```bash
-    $ git push -u your-name 15.0-your_new_feature_theme-your-name
+    $ git push -u your-name 18.0-your_new_feature_theme-your-name
     ```
 
 13. Make a PR with your changes as you usually do it with github's web
@@ -186,4 +186,4 @@ Issues
 ---
 
 - Where?: [here](https://github.com/Vauxoo/addons-vauxoo/issues/new)
-- How? Follow [odoo?s](https://github.com/odoo/odoo/blob/15.0/CONTRIBUTING.md) standard to put your issues.
+- How? Follow [odoo?s](https://github.com/odoo/odoo/blob/18.0/CONTRIBUTING.md) standard to put your issues.

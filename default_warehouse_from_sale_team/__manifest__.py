@@ -6,8 +6,8 @@
     """,
     "author": "Vauxoo",
     "website": "http://www.vauxoo.com",
-    "license": "LGPL-3",
-    "category": "Inventory/Inventory",
+    "license": "OPL-1",
+    "category": "Warehouse",
     "version": "18.0.1.0.0",
     "depends": [
         "sale_stock",
@@ -27,8 +27,11 @@
         "demo/stock_warehouse_demo.xml",
         "demo/crm_team_demo.xml",
     ],
+    "images": [
+        "static/description/main_screen.png",
+    ],
+    "support": "support@vauxoo.com",
+    "price": 260,
+    "currency": "EUR",
     "post_init_hook": "post_init_hook",
-    "installable": True,
-    "application": False,
-    "auto_install": False,
 }

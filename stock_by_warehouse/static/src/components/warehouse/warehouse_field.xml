@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <t t-name="stock_by_warehouse.ShowWarehouseInfo">
+        <div>
+            <p t-if="this.props.byLocation" class="availability_product my-0 mr-2">
+                The product is available in: <t t-out="state.show" /> locations.
+                <a
+                    role="button"
+                    tabindex="0"
+                    class="js_available_info fa fa-bars"
+                    t-on-click.stop="(ev) => this.onClick(ev)"
+                />
+            </p>
+            <a
+                t-else=""
+                role="button"
+                tabindex="0"
+                class="js_product_warehouse"
+                t-on-click.stop="(ev) => this.onClick(ev)"
+            >
+                <b t-out="state.show" /> ... see all warehouses .. <i class="fa fa-list-ul" />
+            </a>
+        </div>
+    </t>
+
+    <t t-name="stock_by_warehouse.ProductWarehousePopOver">
+        <h3 t-if="this.props.title" class="popover-header d-flex justify-content-center" t-out="this.props.title" />
+        <div class="popover-body stock-by-warehouse-widget">
+            <table class="table" style="border-collapse: collapse;">
+                <thead style="position: sticky; top: 0; background-color: #017E84; z-index: 1;">
+                    <tr style="text-align: center; background-color: #017E84; color: white;">
+                        <th id="th_warehouse">Warehouse</th>
+                        <th id="th_onhand">On Hand</th>
+                        <th id="th_outgoing">Outgoing</th>
+                        <th id="th_available">Available</th>
+                        <th id="th_incoming">Incoming</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="this.props.lines" t-as="line" t-key="line_index">
+                        <t
+                            t-if="
+                                line.available gt 0
+                                or line.outgoing gt 0
+                                or line.saleable gt 0
+                                or line.incoming gt 0
+                                or line.virtual gt 0
+                            "
+                        >
+                            <tr>
+                                <td style="text-align: center;">
+                                    <b
+                                        class="text-left"
+                                        t-att-title="'Warehouse Name: ' + line.warehouse"
+                                        t-out="line.warehouse_short"
+                                    />
+                                </td>
+                                <td style="text-align: center;">
+                                    <span
+                                        class="text-muted"
+                                        title="Available now, but not necessarily for sale"
+                                        t-out="line.available_formatted"
+                                    />
+                                </td>
+                                <td style="text-align: center;">
+                                    <span class="text-muted" title="Outgoing" t-out="line.outgoing_formatted" />
+                                </td>
+                                <td style="text-align: center;">
+                                    <t t-if="line.virtual gt 0" t-set="saleable_qty_title_message">
+                                        <t>This quantity is available for immediate sale and delivery.</t>
+                                        <t t-out="'\n'" />
+                                        <t>This represents on hand quantity minus the picked (outgoing) quantity.</t>
+                                    </t>
+                                    <t t-else="" t-set="saleable_qty_title_message">
+                                        There is a deficit. The reserved quantity is greater than the available stock.
+                                    </t>
+                                    <span
+                                        t-att-title="saleable_qty_title_message"
+                                        t-att-class="line.saleable gt 0 ? 'text-success' : 'text-danger'"
+                                        t-out="line.saleable_formatted"
+                                    />
+                                </td>
+                                <td style="text-align: center;">
+                                    <t
+                                        t-if="line.virtual lt 1 and line.incoming gt 0"
+                                        t-set="incoming_qty_title_message"
+                                    >
+                                        Incoming stock may not cover or will barely meet demand.
+                                    </t>
+                                    <t t-elif="line.incoming lt 1" t-set="incoming_qty_title_message">
+                                        No quantities are coming in.
+                                    </t>
+                                    <t t-else="" t-set="incoming_qty_title_message">
+                                        It is coming in. It will be available soon.
+                                    </t>
+                                    <span
+                                        t-att-title="incoming_qty_title_message"
+                                        t-att-class="line.virtual gt 0 ? '' : 'text-danger'"
+                                        t-out="line.incoming_formatted"
+                                    />
+                                </td>
+                            </tr>
+                        </t>
+                    </t>
+                </tbody>
+            </table>
+        </div>
+    </t>
+
+    <t t-name="stock_by_warehouse.StockAvailabilityPopOver">
+        <h3 t-if="this.props.title" class="popover-header d-flex justify-content-center" t-out="this.props.title" />
+        <div class="popover-body stock-by-warehouse-widget">
+            <div t-if="this.props.title">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th title="Stock Location">Location</th>
+                            <th title="Quantity Available">Stock Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="this.props.lines" t-as="line" t-key="line_index">
+                            <tr class="table-info">
+                                <td>Warehouse: <t t-out="line.warehouse_name" /></td>
+                                <td>Locations: <t t-out="line.locations_quantity_formatted" /></td>
+                            </tr>
+                            <tr t-foreach="line.info_content" t-as="location" t-key="location_index">
+                                <td t-out="location.location" />
+                                <td t-out="location.quantity" />
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </t>
+
+</templates>

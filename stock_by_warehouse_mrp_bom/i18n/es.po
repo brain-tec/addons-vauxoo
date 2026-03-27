@@ -1,0 +1,72 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* stock_by_warehouse_mrp_bom
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-16 22:44+0000\n"
+"PO-Revision-Date: 2026-01-16 22:44+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: stock_by_warehouse_mrp_bom
+#: model:ir.model.fields,help:stock_by_warehouse_mrp_bom.field_mrp_bom_line__is_storable
+msgid "A storable product is a product for which you manage stock."
+msgstr ""
+"Un producto almacenable es un producto para el cual gestionas el inventario."
+
+#. module: stock_by_warehouse_mrp_bom
+#: model:ir.model,name:stock_by_warehouse_mrp_bom.model_mrp_bom_line
+msgid "Bill of Material Line"
+msgstr "Línea de lista de materiales"
+
+#. module: stock_by_warehouse_mrp_bom
+#: model:ir.model.fields,field_description:stock_by_warehouse_mrp_bom.field_mrp_bom_line__display_name
+msgid "Display Name"
+msgstr "Nombre para mostrar"
+
+#. module: stock_by_warehouse_mrp_bom
+#: model:ir.model.fields,field_description:stock_by_warehouse_mrp_bom.field_mrp_bom_line__id
+msgid "ID"
+msgstr ""
+
+#. module: stock_by_warehouse_mrp_bom
+#: model_terms:ir.ui.view,arch_db:stock_by_warehouse_mrp_bom.mrp_bom_line_view_form_inherit
+msgid "The stock"
+msgstr "La existencia"
+
+#. module: stock_by_warehouse_mrp_bom
+#: model:ir.model.fields,field_description:stock_by_warehouse_mrp_bom.field_mrp_bom_line__is_storable
+msgid "Track Inventory"
+msgstr "Rastrear inventario"
+
+#. module: stock_by_warehouse_mrp_bom
+#: model:ir.model.fields,field_description:stock_by_warehouse_mrp_bom.field_mrp_bom_line__warehouse_id
+msgid "Warehouse"
+msgstr "Almacén"
+
+#. module: stock_by_warehouse_mrp_bom
+#: model:ir.model.fields,field_description:stock_by_warehouse_mrp_bom.field_mrp_bom_line__warehouses_stock
+msgid "Warehouses Stock"
+msgstr "Almacenes de existencia"
+
+#. module: stock_by_warehouse_mrp_bom
+#: model:ir.model.fields,field_description:stock_by_warehouse_mrp_bom.field_mrp_bom_line__warehouses_stock_recompute
+msgid "Warehouses Stock Recompute"
+msgstr "Recalcular almacenes de existencia"
+
+#. module: stock_by_warehouse_mrp_bom
+#: model_terms:ir.ui.view,arch_db:stock_by_warehouse_mrp_bom.mrp_bom_line_view_form_inherit
+msgid "in:"
+msgstr "en:"
+
+#. module: stock_by_warehouse_mrp_bom
+#: model_terms:ir.ui.view,arch_db:stock_by_warehouse_mrp_bom.mrp_bom_line_view_form_inherit
+msgid "that is immediately available is:"
+msgstr "que está disponible de inmediato es:"

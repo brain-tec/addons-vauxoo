@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="mrp_bom_line_view_form_inherit" model="ir.ui.view">
+        <field name="name">mrp.bom.line.stock.warehouse</field>
+        <field name="model">mrp.bom.line</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_line_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="edit">1</attribute>
+            </xpath>
+            <xpath expr="//form/sheet/group" position="before">
+                <div class="text-center alert alert-info" role="alert" invisible="not is_storable">
+                    <p>The stock <span invisible="not warehouse_id">in: <field
+                                name="warehouse_id"
+                            /></span> that is immediately available is: <field
+                            name="warehouses_stock"
+                            widget="warehouse"
+                            groups="stock.group_stock_multi_warehouses"
+                            options="{'placement': 'bottom'}"
+                        />
+                        <span class="me-2" />
+                        <field
+                            name="warehouses_stock_recompute"
+                            widget="boolean_toggle"
+                            force_save="1"
+                            groups="stock.group_stock_multi_warehouses"
+                        />
+                    </p>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

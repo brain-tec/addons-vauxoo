@@ -12,9 +12,8 @@
         "demo/product_product_demo.xml",
     ],
     "data": [
-        "security/sale_margin_percentage_security.xml",
+        "security/res_groups_security.xml",
         "views/sale_order_views.xml",
         "views/res_config_settings_views.xml",
     ],
-    "installable": True,
 }
